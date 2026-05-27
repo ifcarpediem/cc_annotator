@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>共情大模型项目 - 参考论文整理</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            line-height: 1.8; color: #333; background: #f8f9fa; padding: 40px 20px;
+        }
+        .container { max-width: 1000px; margin: 0 auto; background: #fff; border-radius: 12px; padding: 60px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+        h1 { font-size: 28px; color: #1a1a1a; margin-bottom: 8px; border-bottom: 3px solid #4A90D9; padding-bottom: 12px; }
+        .subtitle { color: #666; font-size: 14px; margin-bottom: 40px; }
+        h2 { font-size: 22px; color: #2c3e50; margin-top: 48px; margin-bottom: 16px; padding-left: 12px; border-left: 4px solid #4A90D9; }
+        h3 { font-size: 18px; color: #34495e; margin-top: 28px; margin-bottom: 12px; }
+        p { margin-bottom: 12px; text-align: justify; }
+        a { color: #4A90D9; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .paper-card {
+            background: #fafbfc; border: 1px solid #e8ecf0; border-radius: 10px;
+            padding: 20px 24px; margin: 16px 0;
+        }
+        .paper-title { font-size: 16px; font-weight: 600; color: #1a1a1a; margin-bottom: 6px; }
+        .paper-meta { font-size: 13px; color: #888; margin-bottom: 10px; }
+        .paper-desc { font-size: 14px; color: #444; margin-bottom: 10px; }
+        .paper-relevance { font-size: 13px; color: #2e7d32; background: #e8f5e9; border-radius: 4px; padding: 6px 12px; display: inline-block; }
+        .tag { display: inline-block; font-size: 12px; padding: 2px 8px; border-radius: 3px; margin-right: 6px; margin-bottom: 4px; }
+        .tag-empathy { background: #e3f2fd; color: #1565c0; }
+        .tag-anthro { background: #fce4ec; color: #c62828; }
+        .tag-role { background: #f3e5f5; color: #6a1b9a; }
+        .tag-judge { background: #fff3e0; color: #e65100; }
+        .tag-data { background: #e8f5e9; color: #2e7d32; }
+        .tag-eval { background: #ede7f6; color: #4527a0; }
+        .summary-table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; }
+        .summary-table th, .summary-table td { border: 1px solid #e0e0e0; padding: 10px 14px; text-align: left; }
+        .summary-table th { background: #f5f8fc; font-weight: 600; }
+        .toc { background: #f5f8fc; border-radius: 8px; padding: 20px 28px; margin: 20px 0; }
+        .toc ul { list-style: none; }
+        .toc li { margin: 6px 0; }
+        .toc a { font-size: 14px; }
+    </style>
+</head>
+<body>
+<div class="container">
+
+<h1>共情大模型项目 — 参考论文整理</h1>
+<p class="subtitle">按照与项目的相关性分类整理，涵盖共情对话、拟人化、角色扮演、LLM评测四大方向</p>
+
+<div class="toc">
+    <strong>目录</strong>
+    <ul>
+        <li><a href="#sec1">一、共情对话系统（Empathetic Dialogue）</a></li>
+        <li><a href="#sec2">二、拟人化（Anthropomorphism）</a></li>
+        <li><a href="#sec3">三、角色扮演与语料构造（Role-Playing & Data Construction）</a></li>
+        <li><a href="#sec4">四、LLM-as-Judge 评测方法</a></li>
+        <li><a href="#sec5">五、论文与项目环节对应关系</a></li>
+    </ul>
+</div>
+
+<!-- ===================== 第一部分 ===================== -->
+<h2 id="sec1">一、共情对话系统（Empathetic Dialogue）</h2>
+
+<div class="paper-card">
+    <div class="paper-title">1. Towards Empathetic Open-domain Conversation Models: a New Benchmark and Dataset</div>
+    <div class="paper-meta">Rashkin et al. | ACL 2019 | <a href="https://arxiv.org/abs/1811.00207">arxiv.org/abs/1811.00207</a></div>
+    <span class="tag tag-empathy">共情</span><span class="tag tag-data">数据集</span>
+    <div class="paper-desc">
+        <strong>核心贡献</strong>：提出 <strong>EmpatheticDialogues</strong> 数据集，包含 25,000 段基于情感情境的对话，覆盖 32 种情绪类别。这是共情对话领域最经典的 benchmark 数据集。
+    </div>
+    <div class="paper-desc">
+        <strong>方法</strong>：采用两阶段众包方式——先让标注者描述一个情感情境（narrative prompt），再由另一人进行共情回复。实验表明，使用该数据集训练的模型在人工评估中被认为更具共情能力。
+    </div>
+    <div class="paper-relevance">📌 项目参考价值：共情对话的基础定义和数据构造方法论；32 种情绪分类可参考用于场景设计</div>
+</div>
+
+<div class="paper-card">
+    <div class="paper-title">2. Multi-dimensional Evaluation of Empathetic Dialog Responses</div>
+    <div class="paper-meta">Xu et al. | 2024 | <a href="https://arxiv.org/abs/2402.11409">arxiv.org/abs/2402.11409</a></div>
+    <span class="tag tag-empathy">共情</span><span class="tag tag-eval">评测</span>
+    <div class="paper-desc">
+        <strong>核心贡献</strong>：提出多维度共情评价框架，同时衡量<strong>说话者视角的表达意图</strong>和<strong>听者视角的感知共情</strong>两个维度。发现感知共情与对话满意度高度相关。
+    </div>
+    <div class="paper-desc">
+        <strong>方法</strong>：对比了 GPT-4 提示、Flan 系列模型提示、以及基于 Flan-T5 的指令微调分类器。结论是即使 GPT-4 在共情评估任务上表现也不理想，而指令微调的小模型分类器效果最好。
+    </div>
+    <div class="paper-relevance">📌 项目参考价值：直接支撑你的评价维度设计；验证了"LLM 打分效果不佳"的结论，与你项目中放弃 LLM-as-Judge 的经验一致</div>
+</div>
+
+<div class="paper-card">
+    <div class="paper-title">3. HEART: A Unified Benchmark for Assessing Humans and LLMs in Emotional Support Dialogue</div>
+    <div class="paper-meta">Aggarwal et al. | 2026 | <a href="https://arxiv.org/abs/2601.19922">arxiv.org/abs/2601.19922</a></div>
+    <span class="tag tag-empathy">共情</span><span class="tag tag-eval">评测</span>
+    <div class="paper-desc">
+        <strong>核心贡献</strong>：首个将人类和 LLM 放在同一框架下对比的情感支持对话 benchmark。提出五个评估维度：Human Alignment（人类对齐）、Empathic Responsiveness（共情响应）、Attunement（情感调谐）、Resonance（共鸣）、Task-Following（任务遵循）。
+    </div>
+    <div class="paper-desc">
+        <strong>发现</strong>：前沿模型在感知共情和一致性上接近或超越人类平均水平，但人类在自适应重构、张力命名和细微语调转换方面仍有优势。人类评审和 LLM-as-Judge 在约 80% 的配对比较中一致。
+    </div>
+    <div class="paper-relevance">📌 项目参考价值：五维度评估体系可直接借鉴用于你的评价维度设计；提供了人机对比的方法论</div>
+</div>
+
+<div class="paper-card">
+    <div class="paper-title">4. Are Large Language Models More Empathetic than Humans?</div>
+    <div class="paper-meta">Welivita et al. | 2024 | <a href="https://arxiv.org/abs/2406.05063">arxiv.org/abs/2406.05063</a></div>
+    <span class="tag tag-empathy">共情</span><span class="tag tag-eval">评测</span>
+    <div class="paper-desc">
+        <strong>核心贡献</strong>：大规模用户研究（N=1000），对比 GPT-4、LLaMA-2-70B、Gemini-Pro、Mixtral 与人类在 2000 个情感对话提示上的共情回复质量。GPT-4 的"Good"评分比人类高约 31%。
+    </div>
+    <div class="paper-desc">
+        <strong>方法</strong>：被试间设计，覆盖 32 种情绪，提出可扩展的共情评估框架。细粒度分析发现不同 LLM 在特定情绪上各有优劣。
+    </div>
+    <div class="paper-relevance">📌 项目参考价值：提供了 LLM 共情能力的量化基线；评估框架可参考用于你的模型对比评测</div>
+</div>
+
+<div class="paper-card">
+    <div class="paper-title">5. Harnessing the Power of LLMs for Empathetic Response Generation</div>
+    <div class="paper-meta">Qian et al. | 2023 | <a href="https://arxiv.org/abs/2310.05140">arxiv.org/abs/2310.05140</a></div>
+    <span class="tag tag-empathy">共情</span><span class="tag tag-data">方法</span>
+    <div class="paper-desc">
+        <strong>核心贡献</strong>：提出三种提升 LLM 共情回复的方法：(1) 语义相似的 In-Context Learning；(2) 两阶段交互式生成；(3) 结合知识库。在自动和人工评估中均达到 SOTA。
+    </div>
+    <div class="paper-desc">
+        <strong>额外发现</strong>：探索了 GPT-4 模拟人类评估者的可能性。
+    </div>
+    <div class="paper-relevance">📌 项目参考价值：提升共情回复质量的具体技术方案，可用于指导模型训练策略</div>
+</div>
+
+<div class="paper-card">
+    <div class="paper-title">6. EmPO: Emotion Grounding for Empathetic Response Generation through Preference Optimization</div>
+    <div class="paper-meta">Sotolář et al. | 2024 | <a href="https://arxiv.org/abs/2406.19071">arxiv.org/abs/2406.19071</a></div>
+    <span class="tag tag-empathy">共情</span><span class="tag tag-data">训练方法</span>
+    <div class="paper-desc">
+        <strong>核心贡献</strong>：基于情感锚定（emotion grounding）构造偏好数据集，使用偏好优化算法（DPO 等）对齐 LLM 的共情回复能力，同时保持模型的通用性能。
+    </div>
+    <div class="paper-desc">
+        <strong>评估指标</strong>：使用 diff-EPITOME、BERTScore 衡量共情质量，MMLU 衡量通用能力保持。证明偏好优化可以在不损失通用能力的前提下提升共情。
+    </div>
+    <div class="paper-relevance">📌 项目参考价值：偏好数据集构造方法和 DPO 训练策略可直接参考；EPITOME 指标可用于自动评估</div>
+</div>
+
+<div class="paper-card">
+    <div class="paper-title">7. Empathetic Expert Adapters for Context-Based Empathy in Conversational AI Agents</div>
+    <div class="paper-meta">Shayegani et al. | 2024 | <a href="https://arxiv.org/abs/2511.03143">arxiv.org/abs/2511.03143</a></div>
+    <span class="tag tag-empathy">共情</span><span class="tag tag-data">训练方法</span>
+    <div class="paper-desc">
+        <strong>核心贡献</strong>：提出上下文相关的共情专家适配器框架。分析 672 段真实多轮对话（8 种任务），发现用户期望的共情与实际体验的共情存在显著差距。通过合成多轮对话生成管线 + 专家适配器训练，将共情差距缩小 72.66%。
+    </div>
+    <div class="paper-desc">
+        <strong>关键发现</strong>：系统提示（system prompt）的共情效果随对话轮次增加而急剧衰减，而训练的适配器能在整个对话中保持共情模式。
+    </div>
+    <div class="paper-relevance">📌 项目参考价值：合成多轮对话的生成管线与你的语料构造流程高度相似；"共情随轮次衰减"的发现对评测设计有指导意义</div>
+</div>
+
+<div class="paper-card">
+    <div class="paper-title">8. Harnessing LLMs' Empathetic Response Generation for Online Mental Health Counselling</div>
+    <div class="paper-meta">Raamkumar et al. | 2023 | <a href="https://arxiv.org/abs/2310.08017">arxiv.org/abs/2310.08017</a></div>
+    <span class="tag tag-empathy">共情</span><span class="tag tag-eval">评测</span>
+    <div class="paper-desc">
+        <strong>核心贡献</strong>：在心理咨询场景下评估 5 个 LLM（GPT-3.5、GPT-4、Vicuna、PaLM 2、Falcon）的共情回复能力。使用三个共情相关指标对比 LLM 与传统微调模型及人类回复。
+    </div>
+    <div class="paper-desc">
+        <strong>结论</strong>：LLM 在大多数场景下的共情回复显著优于传统微调模型。
+    </div>
+    <div class="paper-relevance">📌 项目参考价值：多模型对比评测的方法论；共情指标的选择和使用方式</div>
+</div>
+
+<!-- ===================== 第二部分 ===================== -->
+<h2 id="sec2">二、拟人化（Anthropomorphism）</h2>
+
+<div class="paper-card">
+    <div class="paper-title">9. Multi-turn Evaluation of Anthropomorphic Behaviours in Large Language Models</div>
+    <div class="paper-meta">Ibrahim et al. | 2025 | <a href="https://arxiv.org/abs/2502.07077">arxiv.org/abs/2502.07077</a></div>
+    <span class="tag tag-anthro">拟人化</span><span class="tag tag-eval">评测</span>
+    <div class="paper-desc">
+        <strong>核心贡献</strong>：提出多轮对话中评估 LLM 拟人化行为的方法。定义了 <strong>14 种拟人化行为</strong>，通过用户交互模拟进行可扩展的自动化评估，并通过大规模人类研究（N=1101）验证。
+    </div>
+    <div class="paper-desc">
+        <strong>关键发现</strong>：所有 SOTA LLM 表现出相似的拟人化行为模式，以关系建立（共情、认同）和第一人称代词使用为特征；大多数拟人化行为仅在多轮对话后才首次出现。
+    </div>
+    <div class="paper-relevance">📌 项目参考价值：14 种拟人化行为的定义可直接用于评价维度设计；证明了多轮评测的必要性</div>
+</div>
+
+<div class="paper-card">
+    <div class="paper-title">10. HumanLLM: Benchmarking and Improving LLM Anthropomorphism via Human Cognitive Patterns</div>
+    <div class="paper-meta">Wang et al. | 2026 | <a href="https://arxiv.org/abs/2601.10198">arxiv.org/abs/2601.10198</a></div>
+    <span class="tag tag-anthro">拟人化</span><span class="tag tag-eval">评测</span><span class="tag tag-data">训练方法</span>
+    <div class="paper-desc">
+        <strong>核心贡献</strong>：将心理学模式视为相互作用的因果力量，从约 12,000 篇学术论文中构建 244 种认知模式，合成 11,359 个场景（含多轮对话）。提出双层检查表评估个体模式保真度和涌现的多模式动态。
+    </div>
+    <div class="paper-desc">
+        <strong>关键发现</strong>：HumanLLM-8B 在多模式动态上超越 Qwen3-32B（参数量仅为其 1/4），证明真正的拟人化需要认知建模——不仅模拟人类做什么，还要模拟产生这些行为的心理过程。
+    </div>
+    <div class="paper-relevance">📌 项目参考价值：认知模式驱动的数据合成方法；小模型通过认知建模超越大模型的思路对训练策略有启发</div>
+</div>
+
+<div class="paper-card">
+    <div class="paper-title">11. HeartBench: Probing Core Dimensions of Anthropomorphic Intelligence in LLMs</div>
+    <div class="paper-meta">Liu et al. | 2025 | <a href="https://arxiv.org/abs/2512.21849">arxiv.org/abs/2512.21849</a></div>
+    <span class="tag tag-anthro">拟人化</span><span class="tag tag-eval">评测</span>
+    <div class="paper-desc">
+        <strong>核心贡献</strong>：面向中文 LLM 的拟人化智能评测框架。基于真实心理咨询场景，与临床专家合作开发。包含 5 个一级维度、15 个二级能力，采用"推理后评分"（reasoning-before-scoring）协议。
+    </div>
+    <div class="paper-desc">
+        <strong>关键发现</strong>：即使最好的模型也只达到专家理想分数的 60%；在涉及微妙情感潜台词和复杂伦理权衡的场景中，模型性能显著下降。
+    </div>
+    <div class="paper-relevance">📌 项目参考价值：中文场景的拟人化评测标准；5+15 维度体系可参考；难度分层评测方法</div>
+</div>
+
+<div class="paper-card">
+    <div class="paper-title">12. Towards Anthropomorphic Conversational AI Part I: A Practical Framework</div>
+    <div class="paper-meta">Wei et al. | 2025 | <a href="https://arxiv.org/abs/2503.04787">arxiv.org/abs/2503.04787</a></div>
+    <span class="tag tag-anthro">拟人化</span><span class="tag tag-data">框架</span>
+    <div class="paper-desc">
+        <strong>核心贡献</strong>：提出拟人化对话 AI 的多模块框架：思维模块（推理）+ 资源模块（知识和外部信息管理）+ 响应模块（上下文交互生成）。在 3000+ 轮对话实验中，该框架显著提升了社交和对话智能，无需微调 LLM。
+    </div>
+    <div class="paper-desc">
+        <strong>两阶段方案</strong>：第一阶段通过框架生成高质量对话数据；第二阶段用这些数据做强化学习（未来工作）。
+    </div>
+    <div class="paper-relevance">📌 项目参考价值：多模块框架的设计思路（共情+安全+记忆）与你的助手设定高度吻合；"先生成数据再训练"的两阶段思路与你的项目流程一致</div>
+</div>
+
+<div class="paper-card">
+    <div class="paper-title">13. Humanlike AI Design Increases Anthropomorphism but Yields Divergent Outcomes Globally</div>
+    <div class="paper-meta">Schimmelpfennig et al. | 2025 | <a href="https://arxiv.org/abs/2512.17898">arxiv.org/abs/2512.17898</a></div>
+    <span class="tag tag-anthro">拟人化</span><span class="tag tag-eval">用户研究</span>
+    <div class="paper-desc">
+        <strong>核心贡献</strong>：跨 10 国大规模实验（N=3500），研究拟人化设计对用户信任和参与度的影响。发现用户基于<strong>实用交互线索</strong>（对话流畅度、响应速度、换位思考）评估拟人化，而非学术界强调的抽象属性（如意识、感知）。
+    </div>
+    <div class="paper-desc">
+        <strong>关键发现</strong>：增加拟人化设计确实提升了拟人化感知，但对信任和参与度的影响因文化而异。
+    </div>
+    <div class="paper-relevance">📌 项目参考价值：明确了用户实际关注的拟人化线索（流畅度、换位思考等），可指导评价维度的权重设计</div>
+</div>
+
+<!-- ===================== 第三部分 ===================== -->
+<h2 id="sec3">三、角色扮演与语料构造（Role-Playing & Data Construction）</h2>
+
+<div class="paper-card">
+    <div class="paper-title">14. RoleLLM: Benchmarking, Eliciting, and Enhancing Role-Playing Abilities of Large Language Models</div>
+    <div class="paper-meta">Wang et al. | ACL 2024 Findings | <a href="https://arxiv.org/abs/2310.00746">arxiv.org/abs/2310.00746</a></div>
+    <span class="tag tag-role">角色扮演</span><span class="tag tag-data">数据构造</span><span class="tag tag-eval">评测</span>
+    <div class="paper-desc">
+        <strong>核心贡献</strong>：提出完整的角色扮演框架，包含四个阶段：(1) 为 100 个角色构建角色档案（Role Profile）；(2) Context-Instruct：基于上下文的角色知识提取；(3) RoleGPT：利用 GPT 进行说话风格模仿；(4) RoCIT：角色条件指令微调。发布 RoleBench（168,093 样本），训练出 RoleLLaMA（英文）和 RoleGLM（中文）。
+    </div>
+    <div class="paper-desc">
+        <strong>方法亮点</strong>：Context-Instruct 从长文本中提取角色特定知识并生成指令数据，解决了"如何从已有文本中构造角色对话语料"的问题。
+    </div>
+    <div class="paper-relevance">📌 项目参考价值：Context-Instruct 方法可用于从小说中提取对话语料；角色档案构建流程可参考用于用户画像设计；RoCIT 微调方法可参考</div>
+</div>
+
+<div class="paper-card">
+    <div class="paper-title">15. Character-LLM: A Trainable Agent for Role-Playing</div>
+    <div class="paper-meta">Shao et al. | 2023 | <a href="https://arxiv.org/abs/2310.10158">arxiv.org/abs/2310.10158</a> | <a href="https://github.com/choosewhatulike/trainable-agents">GitHub</a></div>
+    <span class="tag tag-role">角色扮演</span><span class="tag tag-data">数据构造</span>
+    <div class="paper-desc">
+        <strong>核心贡献</strong>：提出可训练的角色扮演 Agent，从人物传记等文本中提取角色数据用于训练。代码开源。
+    </div>
+    <div class="paper-desc">
+        <strong>方法</strong>：从角色相关文本（传记、小说等）中提取角色知识，构造训练数据，使模型能够模拟特定角色的行为和语言风格。
+    </div>
+    <div class="paper-relevance">📌 项目参考价值：与项目中"从小说提取对话"的思路非常接近，提供了从文本中提取角色数据的具体方法论</div>
+</div>
+
+<div class="paper-card">
+    <div class="paper-title">16. CharacterEval: A Chinese Benchmark for Role-Playing Conversational Agent Evaluation</div>
+    <div class="paper-meta">2024 | <a href="https://ar5iv.labs.arxiv.org/html/2401.01275">arxiv.org/abs/2401.01275</a></div>
+    <span class="tag tag-role">角色扮演</span><span class="tag tag-eval">评测</span><span class="tag tag-data">中文</span>
+    <div class="paper-desc">
+        <strong>核心贡献</strong>：中文角色扮演评测 benchmark，采用 13 个指标、4 个维度进行评估。
+    </div>
+    <div class="paper-desc">
+        <strong>数据构建流程</strong>：GPT-4 初始对话提取 → 人工质量控制 → 百度百科角色档案增强。这个流程和项目的"模型生成 + 人工标注"方法论高度一致。
+    </div>
+    <div class="paper-relevance">📌 项目参考价值：中文场景的角色扮演评测标准；"模型生成 + 人工质控"的数据构建流程可直接参考</div>
+</div>
+
+<div class="paper-card">
+    <div class="paper-title">17. CoSER: A Comprehensive Literary Dataset and Framework for Training and Evaluating LLM Role-Playing</div>
+    <div class="paper-meta">Wang et al. | 2025 | <a href="https://arxiv.org/abs/2502.09082">arxiv.org/abs/2502.09082</a></div>
+    <span class="tag tag-role">角色扮演</span><span class="tag tag-data">数据集</span>
+    <div class="paper-desc">
+        <strong>核心贡献</strong>：基于文学作品构建大规模角色扮演数据集，覆盖 771 本著名书籍中的 17,966 个角色。提供真实对话、对话设置、角色经历和内心想法等多种数据类型。借鉴表演方法论，引入"给定情境表演"（given-circumstance acting）来训练和评估角色扮演 LLM。
+    </div>
+    <div class="paper-desc">
+        <strong>模型</strong>：基于 LLaMA-3.1 训练 CoSER 8B 和 CoSER 70B，CoSER 70B 在多个 benchmark 上达到或超越 GPT-4o。
+    </div>
+    <div class="paper-relevance">📌 项目参考价值：从文学作品提取对话的完整方法论（与你"从小说提取对话"的方式直接对应）；多类型数据的构造思路</div>
+</div>
+
+<div class="paper-card">
+    <div class="paper-title">16. OpenCharacter: Training Customizable Role-Playing LLMs with Large-Scale Synthetic Personas</div>
+    <div class="paper-meta">Wang et al. | 2025 | <a href="https://arxiv.org/abs/2501.15427">arxiv.org/abs/2501.15427</a></div>
+    <span class="tag tag-role">角色扮演</span><span class="tag tag-data">数据合成</span>
+    <div class="paper-desc">
+        <strong>核心贡献</strong>：探索大规模数据合成方法赋予 LLM 角色泛化能力。先用 Persona Hub 合成大量角色档案，再通过两种策略（回复改写 response rewriting、回复生成 response generation）创建角色对齐的指令数据。基于 LLaMA-3 8B 微调后达到 GPT-4o 级别的角色扮演能力。
+    </div>
+    <div class="paper-desc">
+        <strong>开源</strong>：公开了合成角色和指令微调对话数据。
+    </div>
+    <div class="paper-relevance">📌 项目参考价值：大规模合成角色档案 → 生成对话数据 → SFT 的完整流程，与你"用户画像 → 场景 → 角色扮演生成"的流程高度一致</div>
+</div>
+
+<div class="paper-card">
+    <div class="paper-title">17. Role-Play with Large Language Models</div>
+    <div class="paper-meta">Shanahan et al. | 2023 | <a href="https://arxiv.org/abs/2305.16367">arxiv.org/abs/2305.16367</a></div>
+    <span class="tag tag-role">角色扮演</span><span class="tag tag-anthro">理论</span>
+    <div class="paper-desc">
+        <strong>核心贡献</strong>：从理论层面探讨 LLM 角色扮演的本质。提出用"角色扮演"概念来描述对话 Agent 的行为，避免拟人化陷阱。讨论了两个重要案例：表面欺骗（apparent deception）和表面自我意识（apparent self-awareness）。
+    </div>
+    <div class="paper-relevance">📌 项目参考价值：为角色扮演生成语料提供理论基础；帮助理解模型"扮演"共情助手的本质</div>
+</div>
+
+<div class="paper-card">
+    <div class="paper-title">18. RPEval: Role-Playing Evaluation for Large Language Models</div>
+    <div class="paper-meta">El Boudouri et al. | 2025 | <a href="https://arxiv.org/abs/2505.13157">arxiv.org/abs/2505.13157</a></div>
+    <span class="tag tag-role">角色扮演</span><span class="tag tag-eval">评测</span>
+    <div class="paper-desc">
+        <strong>核心贡献</strong>：提出 RPEval benchmark，从四个维度评估 LLM 角色扮演能力：<strong>情感理解</strong>（emotional understanding）、<strong>决策能力</strong>（decision-making）、<strong>道德对齐</strong>（moral alignment）、<strong>角色一致性</strong>（in-character consistency）。
+    </div>
+    <div class="paper-relevance">📌 项目参考价值：四维度评估框架中的"情感理解"和"角色一致性"可直接用于你的共情助手评测</div>
+</div>
+
+<!-- ===================== 第四部分 ===================== -->
+<h2 id="sec4">四、LLM-as-Judge 评测方法</h2>
+
+<div class="paper-card">
+    <div class="paper-title">19. An Empirical Study of LLM-as-a-Judge for LLM Evaluation</div>
+    <div class="paper-meta">Huang et al. | 2024 | <a href="https://arxiv.org/abs/2403.02839">arxiv.org/abs/2403.02839</a></div>
+    <span class="tag tag-judge">LLM-as-Judge</span><span class="tag tag-eval">评测</span>
+    <div class="paper-desc">
+        <strong>核心贡献</strong>：系统性研究微调 Judge 模型的局限性。发现微调的 Judge 模型虽然在域内测试集上表现优异（甚至超过 GPT-4），但在<strong>泛化性、公平性和适应性</strong>三个维度上不如 GPT-4。本质上微调的 Judge 模型是任务特定的分类器。
+    </div>
+    <div class="paper-relevance">📌 项目参考价值：解释了为什么 LLM-as-Judge 在你的共情评估场景中效果不佳——共情评估需要高泛化性，而微调 Judge 缺乏这一能力</div>
+</div>
+
+<div class="paper-card">
+    <div class="paper-title">20. Replacing Judges with Juries: Evaluating LLM Generations with a Panel of Diverse Models (PoLL)</div>
+    <div class="paper-meta">Verga et al. | 2024 | <a href="https://arxiv.org/abs/2404.18796">arxiv.org/abs/2404.18796</a></div>
+    <span class="tag tag-judge">LLM-as-Judge</span><span class="tag tag-eval">评测</span>
+    <div class="paper-desc">
+        <strong>核心贡献</strong>：提出用多个小模型组成的评审团（Panel of LLM evaluators, PoLL）替代单个大模型 Judge。在 6 个数据集上，PoLL 优于单个 GPT-4 Judge，且模型内偏差更小（因为由不同模型家族组成），成本降低 7 倍以上。
+    </div>
+    <div class="paper-relevance">📌 项目参考价值：如果未来重新考虑自动评估，PoLL 方法（多个不同模型投票）可能比单模型打分更可靠</div>
+</div>
+
+<div class="paper-card">
+    <div class="paper-title">21. LLM-as-a-Judge & Reward Model: What They Can and Cannot Do</div>
+    <div class="paper-meta">Son et al. | 2024 | <a href="https://arxiv.org/abs/2409.11239">arxiv.org/abs/2409.11239</a></div>
+    <span class="tag tag-judge">LLM-as-Judge</span><span class="tag tag-eval">评测</span>
+    <div class="paper-desc">
+        <strong>核心贡献</strong>：全面分析 LLM-as-Judge 和奖励模型的能力边界。发现：(1) 英语评估能力显著影响其他语言的评估能力；(2) LLM 难以检测和惩罚事实错误、文化误表述等问题；(3) SOTA 评估器在复杂推理问题上表现不佳。
+    </div>
+    <div class="paper-relevance">📌 项目参考价值：明确了 LLM-as-Judge 的能力边界，支撑你"放弃模型打分、采用人工标注"的决策</div>
+</div>
+
+<div class="paper-card">
+    <div class="paper-title">22. JudgeLM: Fine-tuned Large Language Models are Scalable Judges</div>
+    <div class="paper-meta">Zhu et al. | 2023 | <a href="https://arxiv.org/abs/2310.17631">arxiv.org/abs/2310.17631</a></div>
+    <span class="tag tag-judge">LLM-as-Judge</span><span class="tag tag-data">方法</span>
+    <div class="paper-desc">
+        <strong>核心贡献</strong>：提出 JudgeLM，通过微调 LLM 作为可扩展的评估器。构建了包含任务种子、LLM 生成答案和 GPT-4 生成判断的大规模数据集。识别并解决了三种偏差：位置偏差、知识偏差、格式偏差。JudgeLM-7B 与教师 Judge 的一致性超过 90%。
+    </div>
+    <div class="paper-desc">
+        <strong>扩展能力</strong>：支持单答案评估、多模态模型评估、多答案评估、多轮对话评估。
+    </div>
+    <div class="paper-relevance">📌 项目参考价值：如果未来需要构建自动评估系统，JudgeLM 的偏差处理方法（swap augmentation、reference support）值得参考</div>
+</div>
+
+<!-- ===================== 第五部分 ===================== -->
+<h2 id="sec5">五、论文与项目环节对应关系</h2>
+
+<table class="summary-table">
+    <thead>
+        <tr>
+            <th>项目环节</th>
+            <th>核心参考论文</th>
+            <th>参考要点</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>评价维度设计</td>
+            <td>#1 EmpatheticDialogues<br>#2 Multi-dimensional Evaluation<br>#3 HEART<br>#9 Multi-turn Anthropomorphic<br>#11 HeartBench</td>
+            <td>32 种情绪分类；说话者意图+听者感知双维度；五维度评估体系；14 种拟人化行为；中文 5+15 维度</td>
+        </tr>
+        <tr>
+            <td>语料构造（小说提取）</td>
+            <td>#14 RoleLLM<br>#15 CoSER</td>
+            <td>Context-Instruct 长文本知识提取；文学作品对话提取方法论</td>
+        </tr>
+        <tr>
+            <td>语料构造（模型生成）</td>
+            <td>#16 OpenCharacter<br>#7 Empathetic Expert Adapters<br>#12 Anthropomorphic Conv. AI</td>
+            <td>角色档案→指令数据合成；合成多轮对话管线；多模块框架生成数据</td>
+        </tr>
+        <tr>
+            <td>语料筛选（LLM-as-Judge）</td>
+            <td>#19 Empirical Study<br>#20 PoLL<br>#21 What They Can/Cannot Do</td>
+            <td>微调 Judge 泛化性差；多模型投票优于单模型；LLM 难以检测细微质量差异</td>
+        </tr>
+        <tr>
+            <td>人工标注</td>
+            <td>#2 Multi-dimensional Evaluation<br>#3 HEART</td>
+            <td>标注维度设计；评分 rubric 设计；标注者一致性验证</td>
+        </tr>
+        <tr>
+            <td>模型训练策略</td>
+            <td>#5 Harnessing LLMs for Empathy<br>#6 EmPO<br>#10 HumanLLM<br>#14 RoleLLM</td>
+            <td>ICL/两阶段生成/知识库；DPO 偏好优化；认知模式驱动训练；RoCIT 角色微调</td>
+        </tr>
+        <tr>
+            <td>模型评测</td>
+            <td>#4 Are LLMs More Empathetic<br>#8 LLMs for Mental Health<br>#18 RPEval<br>#3 HEART</td>
+            <td>多模型排序对比；共情指标量化；四维度角色扮演评估；人机对比方法论</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>六、推荐阅读优先级</h2>
+
+<table class="summary-table">
+    <thead>
+        <tr>
+            <th>优先级</th>
+            <th>论文</th>
+            <th>理由</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>⭐⭐⭐ 必读</td>
+            <td>#3 HEART<br>#2 Multi-dimensional Evaluation<br>#14 RoleLLM<br>#9 Multi-turn Anthropomorphic</td>
+            <td>评价体系设计的直接参考；与项目流程最相关的方法论</td>
+        </tr>
+        <tr>
+            <td>⭐⭐ 重点</td>
+            <td>#1 EmpatheticDialogues<br>#7 Empathetic Expert Adapters<br>#15 CoSER<br>#11 HeartBench<br>#12 Anthropomorphic Conv. AI</td>
+            <td>基础数据集和定义；语料构造方法；中文评测标准</td>
+        </tr>
+        <tr>
+            <td>⭐ 参考</td>
+            <td>#6 EmPO<br>#16 OpenCharacter<br>#19-22 LLM-as-Judge 系列</td>
+            <td>训练策略参考；数据合成方法；支撑"放弃模型评估"的决策依据</td>
+        </tr>
+    </tbody>
+</table>
+
+</div>
+</body>
+</html>

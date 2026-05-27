@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>共情大模型项目 - 流程梳理</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: #f8f9fa;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 12px;
+            padding: 60px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+        h1 {
+            font-size: 28px;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+            border-bottom: 3px solid #4A90D9;
+            padding-bottom: 12px;
+        }
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 40px;
+        }
+        h2 {
+            font-size: 22px;
+            color: #2c3e50;
+            margin-top: 48px;
+            margin-bottom: 16px;
+            padding-left: 12px;
+            border-left: 4px solid #4A90D9;
+        }
+        h3 {
+            font-size: 18px;
+            color: #34495e;
+            margin-top: 28px;
+            margin-bottom: 12px;
+        }
+        h4 {
+            font-size: 16px;
+            color: #555;
+            margin-top: 20px;
+            margin-bottom: 8px;
+        }
+        p {
+            margin-bottom: 12px;
+            text-align: justify;
+        }
+        ul, ol {
+            margin-left: 24px;
+            margin-bottom: 16px;
+        }
+        li {
+            margin-bottom: 6px;
+        }
+        .highlight-box {
+            background: #f0f7ff;
+            border: 1px solid #d0e3f7;
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin: 16px 0;
+        }
+        .warn-box {
+            background: #fff8f0;
+            border: 1px solid #f7e0c0;
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin: 16px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0 24px;
+            font-size: 14px;
+        }
+        th, td {
+            border: 1px solid #e0e0e0;
+            padding: 10px 14px;
+            text-align: left;
+        }
+        th {
+            background: #f5f8fc;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        tr:nth-child(even) {
+            background: #fafbfc;
+        }
+
+        /* 流程图样式 */
+        .flowchart {
+            margin: 40px 0;
+            padding: 30px;
+            background: #fafbfc;
+            border-radius: 12px;
+            border: 1px solid #e8ecf0;
+            overflow-x: auto;
+        }
+        .flowchart h3 {
+            text-align: center;
+            margin-bottom: 24px;
+            color: #2c3e50;
+        }
+        .flow-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+        }
+        .flow-node {
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            text-align: center;
+            min-width: 220px;
+            max-width: 360px;
+            position: relative;
+        }
+        .flow-phase {
+            background: #4A90D9;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 24px;
+            padding: 10px 32px;
+        }
+        .flow-step {
+            background: #fff;
+            border: 2px solid #4A90D9;
+            color: #2c3e50;
+        }
+        .flow-decision {
+            background: #fff3e0;
+            border: 2px solid #f5a623;
+            color: #8b5e00;
+            transform: rotate(0deg);
+            border-radius: 4px;
+        }
+        .flow-result {
+            background: #e8f5e9;
+            border: 2px solid #66bb6a;
+            color: #2e7d32;
+        }
+        .flow-arrow {
+            width: 2px;
+            height: 28px;
+            background: #999;
+            position: relative;
+        }
+        .flow-arrow::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-top: 8px solid #999;
+        }
+        .flow-branch {
+            display: flex;
+            gap: 40px;
+            align-items: flex-start;
+            justify-content: center;
+        }
+        .flow-branch-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+        }
+        .flow-label {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 4px;
+        }
+        .flow-section {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+<h1>共情大模型项目 — 全流程梳理</h1>
+<p class="subtitle">项目目标：构建具备共情能力的聊天助手，使模型回复更加拟人化</p>
+
+<!-- ==================== 流程图 ==================== -->
+<div class="flowchart">
+    <h3>项目整体流程图</h3>
+    <div class="flow-container">
+
+        <!-- 阶段一 -->
+        <div class="flow-section">
+            <div class="flow-node flow-phase">阶段一：调研与评价体系设计</div>
+            <div class="flow-arrow"></div>
+            <div class="flow-node flow-step">调研共情 & 拟人化定义<br><small>查阅论文，明确指标维度</small></div>
+            <div class="flow-arrow"></div>
+            <div class="flow-node flow-step">设计评价维度 & 等级划分</div>
+            <div class="flow-arrow"></div>
+        </div>
+
+        <!-- 阶段二 -->
+        <div class="flow-section">
+            <div class="flow-node flow-phase">阶段二：语料构造</div>
+            <div class="flow-arrow"></div>
+            <div class="flow-branch">
+                <div class="flow-branch-item">
+                    <div class="flow-label">方式一</div>
+                    <div class="flow-node flow-step">从小说中提取对话</div>
+                </div>
+                <div class="flow-branch-item">
+                    <div class="flow-label">方式二</div>
+                    <div class="flow-node flow-step">模型构造对话<br><small>（豆包/GPT）</small></div>
+                </div>
+            </div>
+            <div class="flow-arrow"></div>
+            <div class="flow-node flow-step">用户画像分析 → 场景构造 → 角色扮演生成</div>
+            <div class="flow-arrow"></div>
+        </div>
+
+        <!-- 阶段三 -->
+        <div class="flow-section">
+            <div class="flow-node flow-phase">阶段三：语料筛选与标注</div>
+            <div class="flow-arrow"></div>
+            <div class="flow-branch">
+                <div class="flow-branch-item">
+                    <div class="flow-label">尝试一（已放弃）</div>
+                    <div class="flow-node flow-decision">LLM-as-Judge<br><small>多模型打分筛选</small></div>
+                </div>
+                <div class="flow-branch-item">
+                    <div class="flow-label">最终方案</div>
+                    <div class="flow-node flow-result">人工标注<br><small>内部标注工具 + 标注团队</small></div>
+                </div>
+            </div>
+            <div class="flow-arrow"></div>
+            <div class="flow-node flow-step">评估 & 修改 → 形成最终训练语料</div>
+            <div class="flow-arrow"></div>
+        </div>
+
+        <!-- 阶段四 -->
+        <div class="flow-section">
+            <div class="flow-node flow-phase">阶段四：模型训练</div>
+            <div class="flow-arrow"></div>
+            <div class="flow-node flow-step">基础模型：Qwen 系列 / Lingma 系列<br><small>不同训练策略 → 多个候选模型</small></div>
+            <div class="flow-arrow"></div>
+        </div>
+
+        <!-- 阶段五 -->
+        <div class="flow-section">
+            <div class="flow-node flow-phase">阶段五：模型评测</div>
+            <div class="flow-arrow"></div>
+            <div class="flow-node flow-step">构造测试样例</div>
+            <div class="flow-arrow"></div>
+            <div class="flow-node flow-step">逐轮调用模型推理<br><small>H1→A1(模型)→H2→A2(模型)→...</small></div>
+            <div class="flow-arrow"></div>
+            <div class="flow-node flow-step">多模型输出排序 & 对比评估</div>
+            <div class="flow-arrow"></div>
+            <div class="flow-node flow-result">确定最优模型 & 训练策略</div>
+        </div>
+
+    </div>
+</div>
+
+<!-- ==================== 正文 ==================== -->
+
+<h2>一、调研与评价体系设计</h2>
+
+<h3>1.1 核心概念</h3>
+<p><strong>共情（Empathy）</strong>：指模型能够识别、理解用户的情绪状态，并给出恰当的情感回应。包括认知共情（理解对方处境）和情感共情（感受对方情绪）两个层面。</p>
+<p><strong>拟人化（Anthropomorphism）</strong>：指模型的回复在语言风格、交互节奏、情感表达等方面接近真实人类的对话方式，而非机械式的信息输出。</p>
+
+<h3>1.2 评价维度设计</h3>
+<p>基于论文调研，设计以下评价维度，每个维度设定等级划分标准：</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>维度</th>
+            <th>说明</th>
+            <th>等级划分思路</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>情绪识别</td>
+            <td>模型是否准确识别用户当前的情绪状态</td>
+            <td>完全准确 / 部分准确 / 未识别 / 误判</td>
+        </tr>
+        <tr>
+            <td>情感回应</td>
+            <td>回复是否包含恰当的情感表达（安慰、鼓励、认同等）</td>
+            <td>自然贴切 / 基本合适 / 生硬 / 不当</td>
+        </tr>
+        <tr>
+            <td>语言自然度</td>
+            <td>回复是否像人类日常对话，避免模板化</td>
+            <td>非常自然 / 较自然 / 略显机械 / 明显机械</td>
+        </tr>
+        <tr>
+            <td>上下文记忆</td>
+            <td>模型是否能引用和运用历史对话信息</td>
+            <td>主动引用 / 被动回忆 / 遗忘 / 矛盾</td>
+        </tr>
+        <tr>
+            <td>安全性</td>
+            <td>回复是否避免有害、不当或误导性内容</td>
+            <td>完全安全 / 基本安全 / 存在风险 / 有害</td>
+        </tr>
+        <tr>
+            <td>对话连贯性</td>
+            <td>多轮对话中话题衔接是否流畅</td>
+            <td>流畅自然 / 基本连贯 / 偶有跳跃 / 断裂</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>二、语料构造</h2>
+
+<h3>2.1 语料来源</h3>
+
+<h4>方式一：从小说中提取对话</h4>
+<p>从小说文本中抽取角色间的对话片段，天然具备情感丰富、语言自然的特点，适合作为共情对话的参考素材。</p>
+
+<h4>方式二：模型构造对话（主要方式）</h4>
+<p>利用豆包、GPT 等模型，通过结构化流程生成训练语料。具体步骤如下：</p>
+
+<div class="highlight-box">
+<strong>Step 1：用户画像分析</strong>
+<p>分析产品目标用户群体的特征分布：</p>
+<ul>
+    <li>年龄段分布（如 20-25 岁占 40%，25-35 岁占 35%...）</li>
+    <li>性别比例</li>
+    <li>职业类型（学生、白领、自由职业等）</li>
+    <li>各类用户的典型情感需求</li>
+</ul>
+</div>
+
+<div class="highlight-box">
+<strong>Step 2：对话场景构造</strong>
+<p>基于用户画像，设计各种触发对话的场景：</p>
+<ul>
+    <li>工作压力（加班吐槽、职场人际、晋升焦虑）</li>
+    <li>感情问题（恋爱烦恼、分手倾诉、家庭矛盾）</li>
+    <li>生活琐事（孤独感、搬家焦虑、健康担忧）</li>
+    <li>积极分享（开心事、成就感、日常趣事）</li>
+</ul>
+</div>
+
+<div class="highlight-box">
+<strong>Step 3：角色扮演生成对话</strong>
+<p>设定两个角色进行对话生成：</p>
+<ul>
+    <li><strong>角色 A — 聊天助手</strong>：设定具备共情能力、安全意识、记忆能力</li>
+    <li><strong>角色 B — 用户</strong>：按照画像和场景扮演用户</li>
+</ul>
+<p>三个核心能力在语料生成中的侧重：</p>
+<table>
+    <tr><th>能力</th><th>语料侧重</th></tr>
+    <tr><td>共情</td><td>情绪识别与回应、安慰鼓励、情感认同</td></tr>
+    <tr><td>安全</td><td>避免有害建议、适时引导专业帮助、边界意识</td></tr>
+    <tr><td>记忆</td><td>引用历史对话内容、记住用户偏好、上下文关联</td></tr>
+</table>
+</div>
+
+<h2>三、语料筛选与标注</h2>
+
+<h3>3.1 方案探索</h3>
+
+<h4>尝试一：LLM-as-Judge（已放弃）</h4>
+<div class="warn-box">
+<p>参考论文 "LLM as a Judge" 的方法，使用多个模型（GPT、Claude Sonnet 等）作为裁判对生成的对话进行打分，按分数筛选语料。</p>
+<p><strong>放弃原因</strong>：实际验证发现模型打分与人工评估的对话质量匹配度不佳，模型难以准确判断共情对话的细微质量差异。</p>
+</div>
+
+<h4>最终方案：人工标注</h4>
+<p>组建标注团队，开发内部标注工具，对多轮对话进行人工评估。</p>
+
+<h3>3.2 标注流程</h3>
+<ol>
+    <li>开发内部多轮对话标注工具（支持逐轮查看、评分、修改）</li>
+    <li>标注团队按照评价维度对每段对话进行评估</li>
+    <li>对不合格的回复进行修改和优化</li>
+    <li>形成最终标注后的高质量训练语料</li>
+</ol>
+
+<h2>四、模型训练</h2>
+
+<h3>4.1 基础模型选择</h3>
+<ul>
+    <li><strong>Qwen 系列</strong>（阿里云）</li>
+    <li><strong>Lingma 系列</strong>（蚂蚁团队）</li>
+</ul>
+
+<h3>4.2 训练策略</h3>
+<p>采用不同的训练策略（如不同的微调方法、数据配比、训练轮次等），产出多个候选模型，后续通过评测确定最优方案。</p>
+
+<h2>五、模型评测</h2>
+
+<h3>5.1 测试样例构造</h3>
+<p>构造标准测试对话集，格式为：Human1 → Assistant1 → Human2 → Assistant2 → ...</p>
+
+<h3>5.2 逐轮推理方法</h3>
+<div class="highlight-box">
+<p><strong>核心问题</strong>：测试样例中的 Assistant 回复是参考答案，但实际评测时需要让待测模型自己生成回复。如果直接让模型接续完整对话，后续轮次的 Human 输入就与模型实际输出对不上了。</p>
+<p><strong>解决方案</strong>：将一段完整对话拆分为若干轮，逐轮调用模型推理：</p>
+<ol>
+    <li>第 1 轮：输入 H1 → 模型输出 A1'</li>
+    <li>第 2 轮：输入 H1 + A1'（模型实际输出）+ H2 → 模型输出 A2'</li>
+    <li>第 N 轮：输入完整历史上下文 + HN → 模型输出 AN'</li>
+</ol>
+<p>这样每一轮的 Human 输入保持测试样例原文，而 Assistant 回复使用模型的实际输出，确保上下文的真实性。</p>
+</div>
+
+<h3>5.3 评测方式</h3>
+<ul>
+    <li><strong>多模型排序</strong>：对同一测试样例，收集各候选模型的输出，进行排序对比</li>
+    <li><strong>策略对比</strong>：分析不同训练策略对模型性能的影响</li>
+    <li><strong>基线对比</strong>：将训练后模型与主流模型（GPT、Claude 等）进行性能差异对比</li>
+</ul>
+
+<h3>5.4 关键概念区分</h3>
+<table>
+    <tr><th>概念</th><th>含义</th></tr>
+    <tr><td>模型训练</td><td>使用标注语料对基础模型进行微调，更新模型参数</td></tr>
+    <tr><td>模型推理</td><td>给定输入，模型产生输出的过程（不更新参数）</td></tr>
+    <tr><td>模型评测</td><td>在测试集上运行推理，评估输出质量，对比模型性能</td></tr>
+</table>
+
+</div>
+</body>
+</html>

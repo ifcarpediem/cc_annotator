@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>项目经验 - 共情大模型</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'SimSun', 'PingFang SC', 'Microsoft YaHei', serif;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: #fff;
+            padding: 40px;
+        }
+        .container { max-width: 800px; margin: 0 auto; }
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            border-bottom: 2px solid #1a1a1a;
+            padding-bottom: 3px;
+            margin-bottom: 6px;
+        }
+        .project-title { font-size: 15px; font-weight: bold; }
+        .project-date { font-size: 13px; }
+        .project-tags { display: flex; gap: 10px; margin: 4px 0 8px; }
+        .tag {
+            font-size: 12px; font-weight: bold;
+            background: #1a1a1a; color: #fff;
+            padding: 1px 8px; border-radius: 2px;
+        }
+        ul { margin-left: 18px; }
+        li { margin-bottom: 4px; font-size: 13.5px; line-height: 1.5; }
+    </style>
+</head>
+<body>
+<div class="container">
+
+<div class="project-header">
+    <span class="project-title">共情大模型 — 数据标注与模型评测（Qwen / Lingma）</span>
+    <span class="project-date">2024.03 - 2024.12</span>
+</div>
+<div class="project-tags">
+    <span class="tag">共情对话</span>
+    <span class="tag">评价体系设计</span>
+    <span class="tag">语料标注</span>
+    <span class="tag">模型评测</span>
+    <span class="tag">用户画像</span>
+</div>
+
+<ul>
+    <li>参与调研共情/拟人化相关论文（EmpatheticDialogues、RoleLLM 等），协助设计多维度评价体系（情绪识别、情感回应、自然度、记忆、安全性），制定评分标准与标注规范</li>
+    <li>负责用户画像分析与对话场景/剧本设计，基于画像构造多类型对话场景（工作压力、感情倾诉等），为模型角色扮演生成语料提供场景脚本</li>
+    <li>参与语料标注工作：按评价体系对多轮对话进行逐轮评估、打分与修改，参与 LLM-as-Judge 方案验证（多模型打分筛选），发现其在共情评估上效果不佳后转为人工标注</li>
+    <li>参与模型评测：基于逐轮推理方法（每轮使用模型真实输出作为上下文）对候选模型进行 GSB 配对比较与排序盲评，输出各模型在共情维度上的质量排序结果，为算法团队训练策略迭代提供依据</li>
+</ul>
+
+</div>
+</body>
+</html>

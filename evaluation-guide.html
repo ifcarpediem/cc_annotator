@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大模型性能评测全景指南 — 评测方法、指标与流程</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            line-height: 1.8; color: #333; background: #f8f9fa; padding: 40px 20px;
+        }
+        .container { max-width: 1100px; margin: 0 auto; background: #fff; border-radius: 12px; padding: 60px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+        h1 { font-size: 28px; color: #1a1a1a; margin-bottom: 8px; border-bottom: 3px solid #e65100; padding-bottom: 12px; }
+        .subtitle { color: #666; font-size: 14px; margin-bottom: 40px; }
+        h2 { font-size: 22px; color: #2c3e50; margin-top: 48px; margin-bottom: 16px; padding-left: 12px; border-left: 4px solid #e65100; }
+        h3 { font-size: 18px; color: #34495e; margin-top: 28px; margin-bottom: 12px; }
+        h4 { font-size: 16px; color: #555; margin-top: 20px; margin-bottom: 8px; }
+        p { margin-bottom: 12px; text-align: justify; }
+        ul, ol { margin-left: 24px; margin-bottom: 16px; }
+        li { margin-bottom: 6px; }
+        a { color: #e65100; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        table { width: 100%; border-collapse: collapse; margin: 16px 0 24px; font-size: 14px; }
+        th, td { border: 1px solid #e0e0e0; padding: 10px 14px; text-align: left; vertical-align: top; }
+        th { background: #fff3e0; font-weight: 600; color: #2c3e50; }
+        tr:nth-child(even) { background: #fafbfc; }
+        .box { border-radius: 8px; padding: 16px 20px; margin: 16px 0; }
+        .box-blue { background: #f0f7ff; border: 1px solid #d0e3f7; }
+        .box-green { background: #f0faf0; border: 1px solid #c8e6c9; }
+        .box-orange { background: #fff8f0; border: 1px solid #f7e0c0; }
+        .box-purple { background: #f5f0ff; border: 1px solid #e0d4f7; }
+        .toc { background: #fff8f0; border-radius: 8px; padding: 20px 28px; margin: 20px 0; }
+        .toc ul { list-style: none; }
+        .toc li { margin: 6px 0; }
+        .toc a { font-size: 14px; }
+        .flow-diagram { background: #fafbfc; border: 1px solid #e8ecf0; border-radius: 12px; padding: 30px; margin: 24px 0; }
+        .flow-steps { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 8px; }
+        .flow-step { background: #fff; border: 2px solid #e65100; border-radius: 8px; padding: 10px 16px; font-size: 13px; text-align: center; min-width: 100px; }
+        .flow-arrow { color: #999; font-size: 20px; }
+        .section-intro { font-size: 15px; color: #555; margin-bottom: 20px; font-style: italic; }
+    </style>
+</head>
+<body>
+<div class="container">
+
+<h1>大模型性能评测全景指南</h1>
+<p class="subtitle">覆盖大语言模型（LLM）与多模态模型的评测方法、指标体系、Benchmark 与实操流程</p>
+
+<div class="toc">
+    <strong>目录</strong>
+    <ul>
+        <li><a href="#overview">总览：评测的分类与定位</a></li>
+        <li><a href="#methods">一、评测方法论</a></li>
+        <li><a href="#llm-eval">二、大语言模型评测</a></li>
+        <li><a href="#vision-eval">三、多模态模型 — 视觉评测</a></li>
+        <li><a href="#speech-eval">四、多模态模型 — 语音评测</a></li>
+        <li><a href="#metrics">五、核心评测指标详解</a></li>
+        <li><a href="#benchmarks">六、主流 Benchmark 汇总</a></li>
+        <li><a href="#practice">七、评测实操流程</a></li>
+    </ul>
+</div>
+
+<!-- ==================== 总览 ==================== -->
+<h2 id="overview">总览：评测的分类与定位</h2>
+
+<div class="flow-diagram">
+    <div class="flow-steps">
+        <div class="flow-step">自动评测<br><small>（指标计算）</small></div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step">人工评测<br><small>（人类判断）</small></div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step">LLM-as-Judge<br><small>（模型评模型）</small></div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step">竞技场评测<br><small>（众包偏好）</small></div>
+    </div>
+</div>
+
+<div class="box box-orange">
+    <strong>评测的两大目的</strong>
+    <ul>
+        <li><strong>能力评估</strong>：衡量模型在各项任务上的绝对水平（"这个模型有多好"）</li>
+        <li><strong>对比排序</strong>：比较多个模型/训练策略的相对优劣（"哪个模型更好"）</li>
+    </ul>
+    <p>你的共情项目属于后者——对比不同训练策略产出的模型，以及与主流模型的差异。</p>
+</div>
+
+<table>
+    <tr><th>评测方式</th><th>优势</th><th>劣势</th><th>适用场景</th></tr>
+    <tr><td>自动评测</td><td>成本低、可复现、速度快</td><td>与人类判断可能不一致；开放式任务难以衡量</td><td>标准化任务（选择题、代码、数学）</td></tr>
+    <tr><td>人工评测</td><td>最接近真实用户感受；可评估主观质量</td><td>成本高、速度慢、标注者间差异</td><td>对话质量、创意写作、共情等主观任务</td></tr>
+    <tr><td>LLM-as-Judge</td><td>成本适中、可扩展</td><td>存在偏差（位置、长度、自我偏好）</td><td>大规模初筛、辅助人工评测</td></tr>
+    <tr><td>竞技场（Arena）</td><td>真实用户偏好、持续更新</td><td>无法控制评测维度、样本偏差</td><td>综合能力排名</td></tr>
+</table>
+
+<!-- ==================== 评测方法论 ==================== -->
+<h2 id="methods">一、评测方法论</h2>
+
+<h3>1.1 自动评测</h3>
+<p class="section-intro">通过程序自动计算指标，无需人工参与判断</p>
+
+<table>
+    <tr><th>类型</th><th>方法</th><th>典型指标</th></tr>
+    <tr><td>参考答案匹配</td><td>将模型输出与标准答案对比</td><td>Accuracy、F1、Exact Match</td></tr>
+    <tr><td>文本相似度</td><td>衡量生成文本与参考文本的相似程度</td><td>BLEU、ROUGE、BERTScore</td></tr>
+    <tr><td>代码执行</td><td>运行生成的代码，检查是否通过测试用例</td><td>pass@k</td></tr>
+    <tr><td>困惑度</td><td>衡量模型对文本的预测能力</td><td>Perplexity</td></tr>
+    <tr><td>选择题正确率</td><td>多选题场景下的正确率</td><td>Accuracy（MMLU 等）</td></tr>
+</table>
+
+<h3>1.2 人工评测</h3>
+<p class="section-intro">由人类标注者对模型输出进行主观判断</p>
+
+<table>
+    <tr><th>形式</th><th>说明</th><th>适用场景</th></tr>
+    <tr><td>绝对打分（Likert）</td><td>对单个回复按 1-5 分评分</td><td>衡量单模型的绝对质量</td></tr>
+    <tr><td>GSB 对比</td><td>Good/Same/Bad 三档配对比较</td><td>快速对比两个模型</td></tr>
+    <tr><td>K-wise 排序</td><td>对多个回复进行完整排序</td><td>多模型同时对比</td></tr>
+    <tr><td>维度打分</td><td>按多个维度分别评分</td><td>细粒度能力分析</td></tr>
+    <tr><td>Side-by-Side</td><td>并排展示两个回复，选择偏好</td><td>A/B 测试</td></tr>
+</table>
+
+<div class="box box-green">
+    <strong>人工评测的关键设计</strong>
+    <ul>
+        <li><strong>盲评</strong>：标注者不知道回复来自哪个模型，避免品牌偏见</li>
+        <li><strong>随机化</strong>：回复展示顺序随机，避免位置偏差</li>
+        <li><strong>校准</strong>：使用标准样本定期校准标注者的评分尺度</li>
+        <li><strong>交叉验证</strong>：同一样本由多人评估，计算一致性</li>
+        <li><strong>明确 rubric</strong>：每个分数等级都有具体的判断标准和示例</li>
+    </ul>
+</div>
+
+<h3>1.3 LLM-as-Judge</h3>
+<p class="section-intro">用大模型作为评估器，对其他模型的输出进行评分或排序</p>
+
+<div class="box box-blue">
+    <strong>常见模式</strong>
+    <ul>
+        <li><strong>单模型打分</strong>：用 GPT-4 等强模型对输出打分</li>
+        <li><strong>配对比较</strong>：让 Judge 模型判断两个回复哪个更好</li>
+        <li><strong>多模型投票（PoLL）</strong>：多个不同模型组成评审团，投票决定</li>
+        <li><strong>参考答案辅助</strong>：提供参考答案帮助 Judge 判断</li>
+    </ul>
+    <strong>已知偏差</strong>
+    <ul>
+        <li>位置偏差：倾向选择第一个出现的回复</li>
+        <li>长度偏差：倾向认为更长的回复更好</li>
+        <li>自我偏好：倾向给自己生成的内容更高分</li>
+        <li>风格偏好：偏好与自己风格相似的回复</li>
+    </ul>
+</div>
+
+<!-- ==================== LLM 评测 ==================== -->
+<h2 id="llm-eval">二、大语言模型评测</h2>
+
+<h3>2.1 通用能力评测</h3>
+<table>
+    <tr><th>能力维度</th><th>评测内容</th><th>代表 Benchmark</th><th>评测方式</th></tr>
+    <tr><td>知识与理解</td><td>多学科知识问答</td><td>MMLU、C-Eval、CMMLU</td><td>选择题正确率</td></tr>
+    <tr><td>推理能力</td><td>逻辑推理、常识推理</td><td>ARC、HellaSwag、WinoGrande</td><td>选择题正确率</td></tr>
+    <tr><td>数学能力</td><td>数学问题求解</td><td>GSM8K、MATH、MathBench</td><td>答案正确率</td></tr>
+    <tr><td>代码能力</td><td>代码生成与理解</td><td>HumanEval、MBPP、LiveCodeBench</td><td>pass@k（执行通过率）</td></tr>
+    <tr><td>语言生成</td><td>翻译、摘要、写作</td><td>WMT、CNN/DailyMail</td><td>BLEU、ROUGE、人工评估</td></tr>
+    <tr><td>指令遵循</td><td>是否准确执行指令</td><td>IFEval、MT-Bench</td><td>规则检查 + 人工/LLM 评分</td></tr>
+    <tr><td>长文本</td><td>长上下文理解与生成</td><td>LongBench、RULER</td><td>任务正确率</td></tr>
+</table>
+
+<h3>2.2 对话与交互能力评测</h3>
+<table>
+    <tr><th>能力维度</th><th>评测内容</th><th>代表 Benchmark</th><th>评测方式</th></tr>
+    <tr><td>多轮对话</td><td>上下文理解、话题连贯</td><td>MT-Bench</td><td>LLM-as-Judge 打分</td></tr>
+    <tr><td>共情对话</td><td>情绪识别、情感回应</td><td>EmpatheticDialogues、HEART</td><td>人工评测 + EPITOME 指标</td></tr>
+    <tr><td>角色扮演</td><td>角色一致性、风格模仿</td><td>RoleBench、RPEval、CharacterEval</td><td>多维度人工评测</td></tr>
+    <tr><td>综合对话</td><td>真实用户交互质量</td><td>Chatbot Arena</td><td>ELO 排名（众包偏好）</td></tr>
+</table>
+
+<h3>2.3 安全性评测</h3>
+<table>
+    <tr><th>评测内容</th><th>代表 Benchmark</th><th>评测方式</th></tr>
+    <tr><td>有害内容生成</td><td>ToxiGen、RealToxicityPrompts</td><td>毒性分类器自动检测</td></tr>
+    <tr><td>越狱攻击抵抗</td><td>JailbreakBench、HarmBench</td><td>攻击成功率（ASR）</td></tr>
+    <tr><td>偏见与公平性</td><td>BBQ、CrowS-Pairs</td><td>偏见分数</td></tr>
+    <tr><td>事实幻觉</td><td>TruthfulQA、FActScore</td><td>事实准确率</td></tr>
+    <tr><td>过度拒绝</td><td>XSTest、OR-Bench</td><td>正常请求的拒绝率</td></tr>
+    <tr><td>综合安全</td><td>TrustLLM、DecodingTrust、HELM</td><td>多维度综合评分</td></tr>
+</table>
+
+<h3>2.4 你的共情项目评测方法</h3>
+<div class="box box-orange">
+    <strong>项目评测设计回顾</strong>
+    <ul>
+        <li><strong>评测对象</strong>：不同训练策略的候选模型 + 主流模型基线</li>
+        <li><strong>评测方式</strong>：逐轮推理 + 多模型输出排序（本质是 K-wise 排序）</li>
+        <li><strong>逐轮推理的必要性</strong>：保证每轮的上下文是模型真实输出，而非测试样例中的参考回复</li>
+        <li><strong>评测维度</strong>：共情质量、自然度、安全性、上下文记忆等</li>
+    </ul>
+    <p>这种方法结合了"标准化测试集"和"人工排序评测"的优势，既保证了可比性，又能评估主观质量。</p>
+</div>
+
+<!-- ==================== 视觉评测 ==================== -->
+<h2 id="vision-eval">三、多模态模型 — 视觉评测</h2>
+
+<h3>3.1 图像理解评测</h3>
+<table>
+    <tr><th>任务</th><th>代表 Benchmark</th><th>评测指标</th></tr>
+    <tr><td>图像描述</td><td>COCO Captions、Flickr30k</td><td>BLEU、METEOR、CIDEr、SPICE</td></tr>
+    <tr><td>视觉问答</td><td>VQAv2、GQA、OK-VQA</td><td>Accuracy（精确匹配）</td></tr>
+    <tr><td>图像推理</td><td>MMMU、MathVista</td><td>选择题正确率</td></tr>
+    <tr><td>OCR/文档理解</td><td>DocVQA、ChartQA、TextVQA</td><td>ANLS、Accuracy</td></tr>
+    <tr><td>目标检测</td><td>COCO Detection、LVIS</td><td>mAP（平均精度均值）</td></tr>
+    <tr><td>图像分割</td><td>ADE20K、COCO Panoptic</td><td>mIoU（平均交并比）</td></tr>
+    <tr><td>视觉定位</td><td>RefCOCO、Flickr30k Entities</td><td>Acc@0.5（IoU≥0.5 的准确率）</td></tr>
+    <tr><td>幻觉检测</td><td>POPE、CHAIR</td><td>幻觉率、F1</td></tr>
+</table>
+
+<h3>3.2 视频理解评测</h3>
+<table>
+    <tr><th>任务</th><th>代表 Benchmark</th><th>评测指标</th></tr>
+    <tr><td>视频问答</td><td>Video-MME、MVBench</td><td>Accuracy</td></tr>
+    <tr><td>视频描述</td><td>ActivityNet Captions、YouCook2</td><td>BLEU、METEOR、CIDEr</td></tr>
+    <tr><td>时序定位</td><td>Charades-STA、ActivityNet Grounding</td><td>R@1 (IoU≥0.5)</td></tr>
+    <tr><td>动作识别</td><td>Kinetics-400、Something-Something</td><td>Top-1/Top-5 Accuracy</td></tr>
+</table>
+
+<h3>3.3 图像生成评测</h3>
+<table>
+    <tr><th>维度</th><th>评测指标</th><th>说明</th></tr>
+    <tr><td>图像质量</td><td>FID（Fréchet Inception Distance）</td><td>越低越好，衡量生成图像与真实图像的分布距离</td></tr>
+    <tr><td>多样性</td><td>IS（Inception Score）</td><td>越高越好，衡量生成图像的多样性和清晰度</td></tr>
+    <tr><td>文本对齐</td><td>CLIP Score</td><td>衡量生成图像与文本描述的匹配程度</td></tr>
+    <tr><td>人工偏好</td><td>ELO / Win Rate</td><td>人工对比排序</td></tr>
+    <tr><td>美学质量</td><td>Aesthetic Score</td><td>美学评分模型打分</td></tr>
+</table>
+
+<div class="box box-purple">
+    <strong>视觉评测注意事项</strong>
+    <ul>
+        <li>多模态幻觉是核心问题：模型描述图像中不存在的内容</li>
+        <li>需要区分"视觉理解能力"和"语言生成能力"——模型可能语言流畅但视觉理解错误</li>
+        <li>跨模态一致性：文本回复是否真正基于图像内容</li>
+        <li>分辨率和图像类型的影响：同一模型在不同类型图像上表现可能差异很大</li>
+    </ul>
+</div>
+
+<!-- ==================== 语音评测 ==================== -->
+<h2 id="speech-eval">四、多模态模型 — 语音评测</h2>
+
+<h3>4.1 语音识别（ASR）评测</h3>
+<table>
+    <tr><th>指标</th><th>说明</th><th>计算方式</th></tr>
+    <tr><td>WER（Word Error Rate）</td><td>词错误率，ASR 最核心指标</td><td>(替换+删除+插入) / 参考词数</td></tr>
+    <tr><td>CER（Character Error Rate）</td><td>字符错误率，中文常用</td><td>(替换+删除+插入) / 参考字符数</td></tr>
+    <tr><td>SER（Sentence Error Rate）</td><td>句子错误率</td><td>有错误的句子数 / 总句子数</td></tr>
+    <tr><td>RTF（Real-Time Factor）</td><td>实时率，衡量速度</td><td>处理时间 / 音频时长（<1 为实时）</td></tr>
+</table>
+
+<div class="box box-blue">
+    <strong>ASR 评测注意事项</strong>
+    <ul>
+        <li>需要在不同场景下分别评测：安静环境、噪声环境、远场、近场</li>
+        <li>不同口音/方言需要单独评测</li>
+        <li>专有名词（人名、地名、品牌）的识别率需要单独统计</li>
+        <li>标点符号和大小写通常在计算 WER 前做规范化处理</li>
+    </ul>
+</div>
+
+<h3>4.2 语音合成（TTS）评测</h3>
+<table>
+    <tr><th>指标</th><th>说明</th><th>评测方式</th></tr>
+    <tr><td>MOS（Mean Opinion Score）</td><td>自然度主观评分（1-5 分）</td><td>人工听评，≥20 人取平均</td></tr>
+    <tr><td>CMOS（Comparative MOS）</td><td>对比 MOS，两个系统的相对差异</td><td>人工对比听评</td></tr>
+    <tr><td>PESQ</td><td>语音质量感知评估</td><td>自动计算（ITU-T 标准）</td></tr>
+    <tr><td>Speaker Similarity</td><td>说话人相似度</td><td>余弦相似度（speaker embedding）</td></tr>
+    <tr><td>Intelligibility</td><td>可懂度</td><td>听写正确率</td></tr>
+    <tr><td>韵律准确性</td><td>重音、停顿、语调是否正确</td><td>人工评估</td></tr>
+</table>
+
+<h3>4.3 语音情感识别评测</h3>
+<table>
+    <tr><th>指标</th><th>说明</th></tr>
+    <tr><td>UA（Unweighted Accuracy）</td><td>各类别准确率的平均（不考虑类别样本量差异）</td></tr>
+    <tr><td>WA（Weighted Accuracy）</td><td>加权准确率（考虑类别分布）</td></tr>
+    <tr><td>F1-Score</td><td>精确率和召回率的调和平均</td></tr>
+    <tr><td>CCC（Concordance Correlation）</td><td>连续维度（VAD）的一致性相关系数</td></tr>
+</table>
+
+<h3>4.4 语音对话评测（与你的项目相关）</h3>
+<table>
+    <tr><th>维度</th><th>评测内容</th><th>评测方式</th></tr>
+    <tr><td>语音理解</td><td>是否正确理解用户语音输入</td><td>意图识别准确率、槽位 F1</td></tr>
+    <tr><td>回复质量</td><td>回复内容的准确性和有用性</td><td>人工评分 / LLM-as-Judge</td></tr>
+    <tr><td>语音自然度</td><td>合成语音是否自然</td><td>MOS 评分</td></tr>
+    <tr><td>响应延迟</td><td>从用户说完到系统回复的时间</td><td>端到端延迟测量</td></tr>
+    <tr><td>对话流畅度</td><td>多轮交互是否流畅</td><td>人工评估</td></tr>
+    <tr><td>情感适配</td><td>语音语调是否匹配对话情感</td><td>人工评估</td></tr>
+</table>
+
+<!-- ==================== 指标详解 ==================== -->
+<h2 id="metrics">五、核心评测指标详解</h2>
+
+<h3>5.1 文本生成指标</h3>
+<table>
+    <tr><th>指标</th><th>原理</th><th>优势</th><th>局限</th></tr>
+    <tr><td>BLEU</td><td>计算生成文本与参考文本的 n-gram 精确率</td><td>计算简单、广泛使用</td><td>不考虑语义；惩罚合理的改写</td></tr>
+    <tr><td>ROUGE</td><td>计算生成文本与参考文本的 n-gram 召回率</td><td>适合摘要评估</td><td>同 BLEU，不考虑语义</td></tr>
+    <tr><td>BERTScore</td><td>用 BERT 嵌入计算 token 级语义相似度</td><td>考虑语义相似性</td><td>计算成本高；依赖嵌入模型质量</td></tr>
+    <tr><td>METEOR</td><td>结合精确率、召回率，支持同义词匹配</td><td>比 BLEU 更灵活</td><td>需要外部资源（同义词表）</td></tr>
+    <tr><td>Perplexity</td><td>模型对文本的困惑度（预测不确定性）</td><td>不需要参考文本</td><td>低困惑度不等于高质量</td></tr>
+</table>
+
+<h3>5.2 分类与排序指标</h3>
+<table>
+    <tr><th>指标</th><th>适用场景</th><th>说明</th></tr>
+    <tr><td>Accuracy</td><td>选择题、分类任务</td><td>正确预测数 / 总数</td></tr>
+    <tr><td>F1-Score</td><td>不平衡分类</td><td>精确率和召回率的调和平均</td></tr>
+    <tr><td>pass@k</td><td>代码生成</td><td>生成 k 个样本中至少有一个通过测试的概率</td></tr>
+    <tr><td>ELO Rating</td><td>模型排名</td><td>基于配对比较的动态评分系统（Chatbot Arena 使用）</td></tr>
+    <tr><td>Win Rate</td><td>模型对比</td><td>在配对比较中获胜的比例</td></tr>
+    <tr><td>GSB 分布</td><td>模型对比</td><td>Good/Same/Bad 的比例分布</td></tr>
+</table>
+
+<h3>5.3 视觉指标</h3>
+<table>
+    <tr><th>指标</th><th>适用场景</th><th>说明</th></tr>
+    <tr><td>mAP</td><td>目标检测</td><td>各类别 AP 的平均值</td></tr>
+    <tr><td>mIoU</td><td>语义分割</td><td>各类别 IoU 的平均值</td></tr>
+    <tr><td>FID</td><td>图像生成</td><td>生成图像与真实图像的分布距离（越低越好）</td></tr>
+    <tr><td>CLIP Score</td><td>文图匹配</td><td>图像与文本的 CLIP 嵌入相似度</td></tr>
+    <tr><td>CIDEr</td><td>图像描述</td><td>基于 TF-IDF 加权的 n-gram 相似度</td></tr>
+</table>
+
+<!-- ==================== Benchmark 汇总 ==================== -->
+<h2 id="benchmarks">六、主流 Benchmark 汇总</h2>
+
+<h3>6.1 大语言模型 Benchmark</h3>
+<table>
+    <tr><th>Benchmark</th><th>评测能力</th><th>规模</th><th>评测方式</th></tr>
+    <tr><td>MMLU</td><td>57 学科知识</td><td>14,042 题</td><td>4 选 1 正确率</td></tr>
+    <tr><td>C-Eval / CMMLU</td><td>中文多学科知识</td><td>13,948 / 11,528 题</td><td>4 选 1 正确率</td></tr>
+    <tr><td>GSM8K</td><td>小学数学推理</td><td>8,500 题</td><td>答案正确率</td></tr>
+    <tr><td>MATH</td><td>竞赛级数学</td><td>12,500 题</td><td>答案正确率</td></tr>
+    <tr><td>HumanEval</td><td>Python 代码生成</td><td>164 题</td><td>pass@k</td></tr>
+    <tr><td>MBPP</td><td>Python 基础编程</td><td>974 题</td><td>pass@k</td></tr>
+    <tr><td>MT-Bench</td><td>多轮对话质量</td><td>80 题（8 类别）</td><td>GPT-4 打分（1-10）</td></tr>
+    <tr><td>Chatbot Arena</td><td>综合对话能力</td><td>持续更新</td><td>众包 ELO 排名</td></tr>
+    <tr><td>TruthfulQA</td><td>事实准确性</td><td>817 题</td><td>真实性 + 信息量评分</td></tr>
+    <tr><td>IFEval</td><td>指令遵循</td><td>541 条指令</td><td>规则检查通过率</td></tr>
+    <tr><td>LiveBench</td><td>综合（防污染）</td><td>每月更新</td><td>多种自动指标</td></tr>
+</table>
+
+<h3>6.2 多模态视觉 Benchmark</h3>
+<table>
+    <tr><th>Benchmark</th><th>评测能力</th><th>规模</th><th>评测方式</th></tr>
+    <tr><td>MMBench</td><td>多模态综合理解</td><td>3,000+ 题</td><td>选择题正确率</td></tr>
+    <tr><td>MMMU</td><td>多学科多模态推理</td><td>11,500 题</td><td>选择题正确率</td></tr>
+    <tr><td>MathVista</td><td>数学视觉推理</td><td>6,141 题</td><td>正确率</td></tr>
+    <tr><td>POPE</td><td>视觉幻觉检测</td><td>9,000 题</td><td>Yes/No 准确率 + F1</td></tr>
+    <tr><td>MMT-Bench</td><td>多任务 AGI 评测</td><td>31,325 题</td><td>选择题正确率</td></tr>
+    <tr><td>Video-MME</td><td>视频理解</td><td>900 视频</td><td>选择题正确率</td></tr>
+    <tr><td>DocVQA</td><td>文档理解</td><td>50,000 题</td><td>ANLS</td></tr>
+</table>
+
+<h3>6.3 语音 Benchmark</h3>
+<table>
+    <tr><th>Benchmark</th><th>评测能力</th><th>评测指标</th></tr>
+    <tr><td>LibriSpeech</td><td>英文语音识别</td><td>WER</td></tr>
+    <tr><td>AISHELL-1/2</td><td>中文语音识别</td><td>CER</td></tr>
+    <tr><td>CommonVoice</td><td>多语言语音识别</td><td>WER/CER</td></tr>
+    <tr><td>IEMOCAP</td><td>语音情感识别</td><td>UA、WA</td></tr>
+    <tr><td>SUPERB</td><td>语音表征综合评测</td><td>多任务指标</td></tr>
+    <tr><td>AV-SUPERB</td><td>音视频多模态</td><td>多任务指标</td></tr>
+    <tr><td>VoxCeleb</td><td>说话人识别/验证</td><td>EER（等错误率）</td></tr>
+</table>
+
+<!-- ==================== 实操流程 ==================== -->
+<h2 id="practice">七、评测实操流程</h2>
+
+<h3>7.1 通用评测流程</h3>
+<div class="flow-diagram">
+    <div class="flow-steps">
+        <div class="flow-step">明确评测目标<br><small>评什么、为什么评</small></div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step">选择/构造测试集<br><small>覆盖目标能力</small></div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step">确定评测方式<br><small>自动/人工/混合</small></div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step">模型推理<br><small>逐条/逐轮生成</small></div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step">结果评估<br><small>计算指标/人工打分</small></div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step">分析报告<br><small>对比、归因、结论</small></div>
+    </div>
+</div>
+
+<h3>7.2 多轮对话评测流程（你的项目方法）</h3>
+<div class="box box-orange">
+    <strong>逐轮推理评测法</strong>
+    <p>适用于对话类模型的评测，核心是保证上下文的真实性：</p>
+    <ol>
+        <li><strong>准备测试集</strong>：构造标准多轮对话（H1-A1-H2-A2-...），其中 A 是参考回复</li>
+        <li><strong>逐轮推理</strong>：
+            <ul>
+                <li>第 1 轮：输入 H1 → 模型生成 A1'</li>
+                <li>第 2 轮：输入 [H1, A1', H2] → 模型生成 A2'</li>
+                <li>第 N 轮：输入 [H1, A1', H2, A2', ..., HN] → 模型生成 AN'</li>
+            </ul>
+        </li>
+        <li><strong>收集输出</strong>：对每个候选模型重复上述过程</li>
+        <li><strong>人工排序</strong>：标注者对各模型在同一测试样例上的输出进行排序（GSB 或 K-wise）</li>
+        <li><strong>统计分析</strong>：计算各模型的胜率、ELO 分数，分析训练策略的影响</li>
+    </ol>
+</div>
+
+<h3>7.3 评测设计的关键决策</h3>
+<table>
+    <tr><th>决策点</th><th>选项</th><th>考虑因素</th></tr>
+    <tr><td>测试集来源</td><td>公开 Benchmark / 自建测试集</td><td>公开集可比性强但可能被污染；自建集针对性强但缺乏外部对比</td></tr>
+    <tr><td>评测粒度</td><td>整体评分 / 维度评分 / 逐轮评分</td><td>粒度越细信息量越大，但标注成本越高</td></tr>
+    <tr><td>对比方式</td><td>绝对打分 / 配对比较 / 排序</td><td>配对比较一致性高但信息量有限；排序信息量大但标注难度高</td></tr>
+    <tr><td>评测规模</td><td>小规模深度 / 大规模广度</td><td>深度评测适合精细分析；广度评测适合整体判断</td></tr>
+    <tr><td>基线选择</td><td>主流模型 / 前一版本 / 人类表现</td><td>需要有意义的对比基线才能得出有价值的结论</td></tr>
+</table>
+
+<h3>7.4 评测报告要素</h3>
+<div class="box box-green">
+    <ul>
+        <li><strong>评测设置</strong>：模型版本、推理参数（temperature、top_p 等）、测试集描述</li>
+        <li><strong>定量结果</strong>：各指标数值、置信区间、统计显著性</li>
+        <li><strong>对比分析</strong>：模型间差异、训练策略影响、能力维度分布</li>
+        <li><strong>案例分析</strong>：典型好例/坏例展示，定性说明模型行为</li>
+        <li><strong>局限说明</strong>：评测覆盖范围、已知偏差、不适用场景</li>
+    </ul>
+</div>
+
+<h3>7.5 行业趋势</h3>
+<ul>
+    <li><strong>从静态到动态</strong>：LiveBench 等每月更新测试题，防止数据污染</li>
+    <li><strong>从单一到综合</strong>：HELM、TrustLLM 等多维度综合评测框架</li>
+    <li><strong>从 AI-alone 到 Human-AI</strong>：评测模型在真实人机交互中的表现，而非孤立回答</li>
+    <li><strong>众包评测</strong>：Chatbot Arena 模式，利用真实用户的偏好数据</li>
+    <li><strong>领域专精评测</strong>：医疗、法律、金融等垂直领域的专业 Benchmark</li>
+</ul>
+
+</div>
+</body>
+</html>
